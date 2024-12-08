@@ -20,6 +20,13 @@ public class Triangle extends Item {
         g.drawLine(p2.x, p2.y, p3.x, p3.y);
         g.drawLine(p3.x, p3.y, p1.x, p1.y);
     }
+    
+    @Override
+    public boolean includes(Point point) {
+    // Basic inclusion check logic (placeholder, refine as needed)
+        return false;
+    }
+
 
     @Override
     public void translate(int dx, int dy) {
@@ -27,4 +34,5 @@ public class Triangle extends Item {
         p2.translate(dx, dy);
         p3.translate(dx, dy);
     }
+    
 }
