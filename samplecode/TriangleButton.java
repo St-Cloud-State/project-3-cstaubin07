@@ -16,27 +16,20 @@ public class TriangleButton extends JButton {
         this.drawingPanel = drawingPanel;
         this.clickCount = 0;
 
-        addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                enableTriangleDrawing();
-            }
-        });
+        addActionListener(e -> enableTriangleDrawing());
     }
 
     private void enableTriangleDrawing() {
         MouseAdapter triangleMouseAdapter = new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                handleMouseClick(e);
+                handleMouseClick(e.getPoint());
             }
         };
         drawingPanel.addMouseListener(triangleMouseAdapter);
     }
 
-    private void handleMouseClick(MouseEvent e) {
-        Point clickedPoint = e.getPoint();
-
+    private void handleMouseClick(Point clickedPoint) {
         if (clickCount == 0) {
             p1 = clickedPoint;
             view.drawPoint(p1);
@@ -48,15 +41,8 @@ public class TriangleButton extends JButton {
         } else if (clickCount == 2) {
             p3 = clickedPoint;
             Triangle triangle = new Triangle(p1, p2, p3);
-            Model model = View.getModel();
-            model.addItem(triangle); // Add the triangle to the model
             view.drawTriangle(triangle);
-
-            // Add the command to the UndoManager
-            TriangleCommand command = new TriangleCommand(triangle, model);
-            undoManager.executeCommand(command);
-
-            // Reset for the next triangle
+            undoManager.executeCommand(new TriangleCommand(triangle, view.getModel()));
             clickCount = 0;
         }
     }

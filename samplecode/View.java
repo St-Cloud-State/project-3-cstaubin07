@@ -1,15 +1,42 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.*;
 
-class View extends JFrame {
+public class View extends JFrame {
     private UIContext uiContext;
-    private JPanel drawingPanel;
+    private DrawingPanel drawingPanel;
     private JPanel buttonPanel;
-    private JButton triangleButton; // Button for triangles
+    private JButton triangleButton;
     private UndoManager undoManager;
     private Model model;
+    private String fileName;
+
+    // Singleton instance
+    private static View instance;
+
+    public static View getInstance() {
+        return instance;
+    }
+
+    // Constructor
+    public View() {
+        super("Drawing Program");
+        instance = this; // Assign singleton instance
+
+        drawingPanel = new DrawingPanel();
+        buttonPanel = new JPanel();
+
+        Container contentPane = getContentPane();
+        contentPane.add(buttonPanel, BorderLayout.NORTH);
+        contentPane.add(drawingPanel, BorderLayout.CENTER);
+
+        // Initialize and add buttons
+        triangleButton = new TriangleButton(undoManager, this, drawingPanel);
+        buttonPanel.add(triangleButton);
+
+        setSize(600, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
 
     // Setters for UndoManager and Model
     public void setUndoManager(UndoManager manager) {
@@ -20,41 +47,36 @@ class View extends JFrame {
         this.model = model;
     }
 
-    // Constructor
-    public View() {
-        super("Drawing Program");
-        drawingPanel = new DrawingPanel();
-        buttonPanel = new JPanel();
-        Container contentpane = getContentPane();
-        contentpane.add(buttonPanel, "North");
-        contentpane.add(drawingPanel);
-
-        // Initialize and add the triangle button
-        triangleButton = new TriangleButton(undoManager, this, drawingPanel);
-        buttonPanel.add(triangleButton);
-
-        this.setSize(600, 400);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    // File name methods
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+        setTitle("Drawing Program - " + fileName);
     }
 
+    public String getFileName() {
+        return fileName;
+    }
+
+    public Model getModel() {
+        return model;
+    }
+    
     // Refreshes the drawing panel
     public void refresh() {
         drawingPanel.repaint();
     }
 
-    // Draws a single point
+    // Draw methods
     public void drawPoint(Point p) {
         Graphics g = drawingPanel.getGraphics();
         g.fillOval(p.x - 3, p.y - 3, 6, 6);
     }
 
-    // Draws a line between two points
     public void drawLine(Point p1, Point p2) {
         Graphics g = drawingPanel.getGraphics();
         g.drawLine(p1.x, p1.y, p2.x, p2.y);
     }
 
-    // Draws a triangle
     public void drawTriangle(Triangle triangle) {
         Graphics g = drawingPanel.getGraphics();
         Point[] vertices = triangle.getVertices();
@@ -63,7 +85,7 @@ class View extends JFrame {
         g.drawLine(vertices[2].x, vertices[2].y, vertices[0].x, vertices[0].y);
     }
 
-    // Maps points (basic passthrough, can be expanded if needed)
+    // Maps points (placeholder for advanced mapping logic)
     public static Point mapPoint(Point point) {
         return point;
     }
@@ -73,9 +95,11 @@ class View extends JFrame {
         @Override
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
-            Enumeration<Item> enumeration = model.getItems();
-            while (enumeration.hasMoreElements()) {
-                ((Item) enumeration.nextElement()).render(uiContext);
+            if (model != null) {
+                Enumeration<Item> enumeration = model.getItems();
+                while (enumeration.hasMoreElements()) {
+                    ((Item) enumeration.nextElement()).render(uiContext);
+                }
             }
         }
     }

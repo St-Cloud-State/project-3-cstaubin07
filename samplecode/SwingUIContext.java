@@ -1,9 +1,9 @@
 import java.awt.*;
 
-public class NewSwingUI implements UIContext {
+public class SwingUIContext implements UIContext {
     private Graphics graphics;
 
-    public NewSwingUI(Graphics graphics) {
+    public SwingUIContext(Graphics graphics) {
         this.graphics = graphics;
     }
 

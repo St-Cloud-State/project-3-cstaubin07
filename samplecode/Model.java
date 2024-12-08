@@ -1,9 +1,10 @@
-import java.util.Enumeration;
-import java.util.Vector;
+import java.io.*;
+import java.util.*;
 
 public class Model {
     private Vector<Item> itemList;
     private Vector<Item> selectedList;
+    private static View view;
 
     public Model() {
         itemList = new Vector<>();
@@ -45,7 +46,28 @@ public class Model {
     }
 
     public void setChanged() {
-        // Notify the view to refresh.
-        View.getInstance().refresh();
+        if (view != null) {
+            view.refresh();
+        }
+    }
+
+    public void save(String fileName) {
+        try (ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            output.writeObject(itemList);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void retrieve(String fileName) {
+        try (ObjectInputStream input = new ObjectInputStream(new FileInputStream(fileName))) {
+            itemList = (Vector<Item>) input.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setView(View viewInstance) {
+        view = viewInstance;
     }
 }
