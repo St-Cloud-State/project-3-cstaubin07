@@ -25,12 +25,13 @@ public class TriangleButton extends JButton {
     }
 
     private void enableTriangleDrawing() {
-        drawingPanel.addMouseListener(new MouseAdapter() {
+        MouseAdapter triangleMouseAdapter = new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 handleMouseClick(e);
             }
-        });
+        };
+        drawingPanel.addMouseListener(triangleMouseAdapter);
     }
 
     private void handleMouseClick(MouseEvent e) {
@@ -47,7 +48,7 @@ public class TriangleButton extends JButton {
         } else if (clickCount == 2) {
             p3 = clickedPoint;
             Triangle triangle = new Triangle(p1, p2, p3);
-            Model model = View.model;
+            Model model = View.getModel();
             model.addItem(triangle); // Add the triangle to the model
             view.drawTriangle(triangle);
 
@@ -57,7 +58,6 @@ public class TriangleButton extends JButton {
 
             // Reset for the next triangle
             clickCount = 0;
-            drawingPanel.removeMouseListener(this);
         }
     }
 }
