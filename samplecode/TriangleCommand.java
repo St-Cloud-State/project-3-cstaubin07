@@ -9,16 +9,18 @@ public class TriangleCommand extends Command {
 
     @Override
     public void execute() {
-        model.addItem(triangle); // Add the triangle to the model
+        model.addItem(triangle);
     }
 
     @Override
-    public void undo() {
-        model.removeItem(triangle); // Remove the triangle from the model
+    public boolean undo() {
+        model.removeItem(triangle);
+        return true;
     }
 
     @Override
-    public void redo() {
-        model.addItem(triangle); // Re-add the triangle to the model
+    public boolean redo() {
+        model.addItem(triangle);
+        return true;
     }
 }
